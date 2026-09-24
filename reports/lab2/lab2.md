@@ -26,6 +26,7 @@ $taskTimeEstimate = 3;
     </main>
 </body>
 </html>
+```
 
 ![Результат виконання](lab2_result.png)
 

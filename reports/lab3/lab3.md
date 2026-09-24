@@ -28,6 +28,7 @@ $isCompleted = true;
             </li>
             <li>Очікуваний час: <?= $taskTimeEstimate ?> год.</li>
         </ul>
+```
 
 ![Результат Виконано](lab3.1_result.png)
 ![Результат В процесі](lab3.2_result.png)
