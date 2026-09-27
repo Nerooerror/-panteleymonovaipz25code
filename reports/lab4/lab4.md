@@ -23,7 +23,8 @@ function getCurrentGreeting() {
     } else {
         return "Доброї ночі";
     }
-}```
+}
+```
 
 ![Результат Вітання](lab4.1_result.png)
 ![Результат Обрізання тексту](lab4.2_result.png)
