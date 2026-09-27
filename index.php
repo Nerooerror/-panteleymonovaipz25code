@@ -24,6 +24,32 @@ $appName = "Task Manager";
 $taskTitle = "Вивчити основи PHP";
 $taskTimeEstimate = 3;
 $isCompleted = false;
+$tasks = [
+    [
+        'id' => 1,
+        'title' => 'Виконати лабораторну роботу №5 з PHP',
+        'priority' => 'High',
+        'is_completed' => false
+    ],
+    [
+        'id' => 2,
+        'title' => 'Розібратися з циклами foreach та масивами',
+        'priority' => 'Medium',
+        'is_completed' => true
+    ],
+    [
+        'id' => 3,
+        'title' => 'Зробити коміт і пуш на GitHub',
+        'priority' => 'High',
+        'is_completed' => false
+    ],
+    [
+        'id' => 4,
+        'title' => 'Підготувати звіт lab5.md',
+        'priority' => 'Low',
+        'is_completed' => false
+    ]
+];
 ?>
 <!DOCTYPE html>
 <html lang="uk">
@@ -47,17 +73,18 @@ $isCompleted = false;
     <main>
         <h2>Список завдань</h2>
         <ul>
-            <li class="<?= $isCompleted ? 'task-done' : 'task-pending' ?>"> 
-                Завдання: <?= formatTitle($taskTitle) ?>
-                <?php if ($isCompleted == true): ?> 
-                    ✔️ Виконано 
-                <?php else: ?> 
-                    🕒 В процесі 
-                <?php endif; ?> 
-            </li>
-            <li>Очікуваний час: <?= $taskTimeEstimate?> год.
-        </li> 
-    </ul> 
-</main> 
-</body> 
+            <?php foreach ($tasks as $task): ?>
+                <li class="<?= $task['is_completed'] ? 'task-done' : 'task-pending' ?>">
+                    Завдання: <?= formatTitle($task['title']) ?> 
+                    (Пріоритет: <?= $task['priority'] ?>) — 
+                    <?php if ($task['is_completed']): ?>
+                        ✔️ Виконано
+                    <?php else: ?>
+                        🕒 В процесі
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </main>
+</body>
 </html>
