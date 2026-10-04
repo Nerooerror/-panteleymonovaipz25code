@@ -71,6 +71,7 @@ $tasks = [
         </style>
     </header>
     <main>
+        <a href="create.php">Додати нове завдання</a>
         <h2>Список завдань</h2>
         <ul>
             <?php foreach ($tasks as $task): ?>
