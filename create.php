@@ -1,9 +1,18 @@
 <?php
+$errors = [];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Користувач натиснув "Зберегти" і відправив дані методом POST
-    echo "<pre>";
-    var_dump($_POST);
-    echo "</pre>";
+    
+    $title = htmlspecialchars(trim($_POST['title'] ?? ''));
+    $description = htmlspecialchars(trim($_POST['description'] ?? ''));
+    $priority = $_POST['priority'] ?? 'Low';
+
+    if (empty($title)) {
+        $errors[] = "Поле Назва є обов'язковим для заповнення!";
+    }
+    if (empty($description)) {
+        $errors[] = "Поле Опис є обов'язковим для заповнення!";
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -18,17 +27,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <h1>Додати нове завдання</h1>
 
+    <?php if (!empty($errors)): ?>
+        <div class="alert alert-danger" style="color: red;">
+            <?php foreach ($errors as $error): ?>
+                <p><?= $error ?></p>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+
     <form action="create.php" method="POST">
 
         <div>
             <label>Назва завдання:</label><br>
-            <input type="text" name="title" required>
+            <input type="text" name="title" value="<?= $title ?? "" ?>">
         </div>
         <br>
 
         <div>
             <label>Опис завдання:</label><br>
-            <textarea name="description"></textarea>
+            <textarea name="description"><?= $description ?? "" ?></textarea>
         </div>
         <br>
 
