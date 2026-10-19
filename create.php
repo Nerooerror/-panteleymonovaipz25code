@@ -7,11 +7,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = htmlspecialchars(trim($_POST['description'] ?? ''));
     $priority = $_POST['priority'] ?? 'Low';
 
+    echo "<pre>";
+    var_dump($_FILES);
+    echo "</pre>";
+
     if (empty($title)) {
-        $errors[] = "Поле Назва є обов'язковим для заповнення!";
+        $errors[] = "Поле обов'язковим для заповнення";
     }
     if (empty($description)) {
-        $errors[] = "Поле Опис є обов'язковим для заповнення!";
+        $errors[] = "Поле обов'язковим для заповнення";
+    }
+
+    if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+        
+        $maxSize = 2 * 1024 * 1024;
+        if ($_FILES['avatar']['size'] > $maxSize) {
+            $errors[] = "Файл завеликий! Максимальний розмір — 2 МБ";
+        }
+
+        $fileName = $_FILES['avatar']['name'];
+        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        $allowedExtensions = ['jpg', 'jpeg', 'png'];
+
+        if (!in_array($fileExtension, $allowedExtensions)) {
+            $errors[] = "Дозволені лише файли .jpg, .jpeg або .png";
+        }
+
+    } else {
+        $errors[] = "Оберіть зображення для завантаження";
+    }
+
+    if (empty($errors)) {
+        $fileTmpPath = $_FILES['avatar']['tmp_name'];
+        $destination = 'uploads/' . $_FILES['avatar']['name'];
+
+        if (move_uploaded_file($fileTmpPath, $destination)) {
+            $successMessage = "Файл успішно збережено";
+        } else {
+            $errors[] = "Не вдалося перемістити завантажений файл";
+        }
     }
 }
 ?>
@@ -35,8 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     <?php endif; ?>
 
+    <?php if (isset($successMessage)): ?>
+        <p style="color: green;"><?= $successMessage ?></p>
+    <?php endif; ?>
 
-    <form action="create.php" method="POST">
+    <form action="create.php" method="POST" enctype="multipart/form-data">
 
         <div>
             <label>Назва завдання:</label><br>
@@ -60,7 +97,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <br>
 
+        <div>
+            <label>Зображення завдання:</label><br>
+            <input type="file" name="avatar" accept="image/png, image/jpeg">
+        </div>
+        <br>
+
         <button type="submit">Зберегти</button>
+
     </form>
 
 </body>

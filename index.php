@@ -1,3 +1,4 @@
+// http://localhost/task_manager/index.php
 <?php
 function formatTitle($text, $maxLength = 20) {
     if (mb_strlen($text) > $maxLength) {
