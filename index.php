@@ -1,4 +1,9 @@
+
+<?php 
 // http://localhost/task_manager/index.php
+session_start();
+?>
+
 <?php
 function formatTitle($text, $maxLength = 20) {
     if (mb_strlen($text) > $maxLength) {
@@ -60,6 +65,16 @@ $tasks = [
 </head>
 <body>
     <header>
+
+        <div style="background: #f4f4f4; padding: 8px; margin-bottom: 10px;">
+            <?php if (isset($_SESSION['is_logged_in']) && $_SESSION['is_logged_in'] === true): ?>
+                Привіт, <?= $_SESSION['user_name'] ?>! <a href="logout.php">[Вийти]</a>
+            <?php else: ?>
+                Ви увійшли як Гість. <a href="login.php">[Увійти]</a>
+            <?php endif; ?>
+        </div>
+
+
         <h1><?= getCurrentGreeting() ?>, вітаємо у <?= $appName ?>!</h1>
         <h1><?= $appName ?></h1>
         <style>
