@@ -1,7 +1,42 @@
+<?php // http://localhost/task_manager/index.php
+declare(strict_types=1);
 
-<?php 
-// http://localhost/task_manager/index.php
 session_start();
+
+require_once __DIR__ . '/Task.php';
+require_once __DIR__ . '/TaskRepository.php';
+
+if (!isset($_SESSION['is_logged_in']) || $_SESSION['is_logged_in'] !== true) {
+    header('Location: login.php');
+    exit;
+}
+
+$repo = new TaskRepository(__DIR__ . '/tasks.json');
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+
+    if ($action === 'add') {
+        $title    = trim($_POST['title'] ?? '');
+        $deadline = trim($_POST['deadline'] ?? '') ?: null;
+        if (!empty($title)) {
+            $repo->add($title, $deadline);
+        }
+    }
+
+    if ($action === 'complete') {
+        $repo->complete((int) ($_POST['id'] ?? 0));
+    }
+
+    if ($action === 'delete') {
+        $repo->delete((int) ($_POST['id'] ?? 0));
+    }
+
+    header('Location: index.php');
+    exit;
+}
+
+$tasks = $repo->findAll();
 ?>
 
 <?php
@@ -11,7 +46,7 @@ function formatTitle($text, $maxLength = 20) {
     }
     return $text;
 }
-
+  
 function getCurrentGreeting() {
     $hour = (int)date('H');
     
@@ -30,32 +65,7 @@ $appName = "Task Manager";
 $taskTitle = "Вивчити основи PHP";
 $taskTimeEstimate = 3;
 $isCompleted = false;
-$tasks = [
-    [
-        'id' => 1,
-        'title' => 'Виконати лабораторну роботу №5 з PHP',
-        'priority' => 'High',
-        'is_completed' => false
-    ],
-    [
-        'id' => 2,
-        'title' => 'Розібратися з циклами foreach та масивами',
-        'priority' => 'Medium',
-        'is_completed' => true
-    ],
-    [
-        'id' => 3,
-        'title' => 'Зробити коміт і пуш на GitHub',
-        'priority' => 'High',
-        'is_completed' => false
-    ],
-    [
-        'id' => 4,
-        'title' => 'Підготувати звіт lab5.md',
-        'priority' => 'Low',
-        'is_completed' => false
-    ]
-];
+
 ?>
 <!DOCTYPE html>
 <html lang="uk">
@@ -87,20 +97,40 @@ $tasks = [
         </style>
     </header>
     <main>
+
+        <div class="stats">
+            Всього: <?= count($tasks) ?> |
+            Виконано: <?= $repo->countCompleted() ?> |
+            Прострочено: <?= $repo->countOverdue() ?>
+        </div>
+
         <a href="create.php">Додати нове завдання</a>
+
         <h2>Список завдань</h2>
         <ul>
+
             <?php foreach ($tasks as $task): ?>
-                <li class="<?= $task['is_completed'] ? 'task-done' : 'task-pending' ?>">
-                    Завдання: <?= formatTitle($task['title']) ?> 
-                    (Пріоритет: <?= $task['priority'] ?>) — 
-                    <?php if ($task['is_completed']): ?>
-                        ✔️ Виконано
-                    <?php else: ?>
-                        🕒 В процесі
+                <li>
+                    Завдання: <?= formatTitle(htmlspecialchars($task->getTitle())) ?> — 
+                    <strong><?= $task->getStatusLabel() ?></strong>
+
+                    <?php if (!$task->isCompleted()): ?>
+                    <form method="POST" style="display:inline; margin-left: 10px;">
+                        <input type="hidden" name="action" value="complete">
+                        <input type="hidden" name="id" value="<?= $task->getId() ?>">
+                        <button type="submit">✓</button>
+                    </form>
                     <?php endif; ?>
+
+                    <form method="POST" style="display:inline; margin-left: 5px;">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="id" value="<?= $task->getId() ?>">
+                    <button type="submit" style="color:red;">✕</button>
+                    </form>
+
                 </li>
             <?php endforeach; ?>
+
         </ul>
     </main>
 </body>

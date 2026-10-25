@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($_POST['username'] === 'admin' && $_POST['password'] === '12345') {
         $_SESSION['is_logged_in'] = true;
         $_SESSION['user_name'] = 'Адміністратор';
-        header('Location: index.php'); // Перенаправлення на головну
+        header('Location: index.php'); 
         exit;
     } else {
         $error = "Невірний логін або пароль!";

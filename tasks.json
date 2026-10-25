@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "title": "Lab 10",
+        "isCompleted": false,
+        "deadline": "2026-10-28"
+    },
+    {
+        "id": 2,
+        "title": "Idk",
+        "isCompleted": false,
+        "deadline": "2026-10-21"
+    },
+    {
+        "id": 3,
+        "title": "Hello",
+        "isCompleted": true,
+        "deadline": "2026-10-31"
+    }
+]

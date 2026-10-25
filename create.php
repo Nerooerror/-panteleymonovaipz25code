@@ -4,6 +4,8 @@ if (!isset($_SESSION['is_logged_in']) || $_SESSION['is_logged_in'] !== true) {
     header('Location: login.php');
     exit;
 }
+
+require_once __DIR__ . '/TaskRepository.php';
 ?>
 
 <?php
@@ -14,10 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = htmlspecialchars(trim($_POST['title'] ?? ''));
     $description = htmlspecialchars(trim($_POST['description'] ?? ''));
     $priority = $_POST['priority'] ?? 'Low';
-
-    echo "<pre>";
-    var_dump($_FILES);
-    echo "</pre>";
+    $deadline = trim($_POST['deadline'] ?? '');
 
     if (empty($title)) {
         $errors[] = "Поле обов'язковим для заповнення";
@@ -50,7 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $destination = 'uploads/' . $_FILES['avatar']['name'];
 
         if (move_uploaded_file($fileTmpPath, $destination)) {
-            $successMessage = "Файл успішно збережено";
+            $repo = new TaskRepository(__DIR__ . '/tasks.json');
+
+            $repo->add($title, $deadline !== '' ? $deadline : null);
+
+            header('Location: index.php');
+            exit;
         } else {
             $errors[] = "Не вдалося перемістити завантажений файл";
         }
@@ -108,6 +112,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div>
             <label>Зображення завдання:</label><br>
             <input type="file" name="avatar" accept="image/png, image/jpeg">
+        </div>
+        <br>
+
+        <div>
+            <label>Дедлайн:</label><br>
+            <input type="date" name="deadline" value="<?= htmlspecialchars($deadline ?? "") ?>">
         </div>
         <br>
 
